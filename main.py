@@ -27,15 +27,17 @@ print("Be the last player with money and assets on the board to win!")
 
 
 while True:
-    try:
-        num_players = int(input("\nTo begin, how many players will be " 
-                                "playing? "))
-        while num_players <= 1 or num_players >= 5:
-            print("You can only play with 2, 3, or 4 players in this version!")
-            num_players = int(input("To begin, how many players will be "
+    while True:
+        try:
+            num_players = int(input("\nTo begin, how many players will be " 
                                     "playing? "))
-    except ValueError:
-       print("You must enter a number to continue!") 
+            while num_players <= 1 or num_players >= 5:
+                print("You can only play with 2, 3, or 4 players in this version!")
+                num_players = int(input("To begin, how many players will be "
+                                        "playing? "))
+            break
+        except ValueError:
+            print("You must enter a number to continue!") 
 
     use_free_parking = get_yes_or_no("\nNow, would you like to include the " 
                                         "free parking pool in your game? "
@@ -60,133 +62,171 @@ while True:
     # enter the game loop
     while True:
         print("\nAll right player", current_player+1, "it's your turn!")
-        user_choice = input("what would you like to do? (r)oll, or (c)heck "
-                            "inventory? ")
-        while user_choice.lower() not in ['r', 'c']:
-            print("Reponse must start with 'r' or 'c'. Try again!")
-            user_choice = input("what would you like to do? (r)oll, or (c)heck "
-                            "inventory? ")
-        
-        if user_choice.lower() == 'c':
-            print("This will be the player's inventory when that functionality "
-                  "is implemented.")
-        else:  
-            roll_again = True
-            num_doubles = 0
+        stay_in_menu = True
+        while stay_in_menu:
+            user_choice = input("what would you like to do? (r)oll, (c)heck "
+                                "inventory, or (b)uy houses and hotels? ")
             
-            while roll_again:
-                current_roll = roll_n_dice(2)
-                print("player "+str(current_player+1)+" rolls a "+
-                    str(current_roll[0])+" and a "+str(current_roll[1])+".")
-                
-                if current_roll[0] != current_roll[1]:
-                    roll_again = False
-                else:
-                    print("you rolled doubles! You'll get to roll again after "
-                          "this turn.")
-                    num_doubles += 1
+            while user_choice[0].lower() not in ['r', 'c', 'b']:
+                print("Reponse must start with 'r', 'c', or 'b'. Try again!")
+                user_choice = input("what would you like to do? (r)oll, (c)heck "
+                                "inventory, or (b)uy houses and hotels? ")
+            
+            if user_choice[0].lower() == 'c':
+                print("This will be the player's inventory when that functionality "
+                    "is implemented.")
+            
+            elif user_choice[0].lower() == 'b':
+                # NOTE: again, a temp var until we connect gameboard.py and 
+                # player.py
+                three_of_a_kind = True
 
-                if num_doubles == 3:
-                    print("You rolled doubles 3 times! Go directly to jail.")
-                    # TODO: set current player position to jail
-                
+                # TODO: make a loop for this option to go back to choices
+                if not three_of_a_kind:
+                    print("You do not have 3 properties of a given color, so you "
+                        "cannot buy any houses nor hotels!")
                 else:
-                    #some temp var until implement player and board functions here
-                    pass_go = True
-                    current_player_cash = 0
-                    # temp space codes are as follows:
-                    # P = PROPERTY
-                    # R = RAILROAD
-                    # U = UTILITY
-                    # GTJ = GO TO JAIL
-                    # CC = COMMUNITY CHEST
-                    # C = CHANCE
-                    # T = TAXES
-                    # FP = FREE PARKING
-                    # JV = JUST VISTING
-                    space_types = np.array(['P', 'R', 'U', 'GTJ',
-                                            'CC', 'C', 'T', 'FP', 'JV'])
-                    current_space = 'P'
-                    is_owned = False
-
-                    if pass_go:
-                        current_player_cash += 200
+                    user_choice = input("What would you like to buy? (house)s or "
+                                        "(hotel)s? ")
+                    while user_choice[:5].lower() not in ['house', 'hotel']:
+                        print("Reponse must start with 'house' or 'hotel'. " 
+                            "Try again!")
+                        user_choice = input("What would you like to buy? (house)s "
+                                            "or (hotel)s? ")
                     
-                    if current_space == space_types[0] or current_space == space_types[1] or current_space == space_types[2]:
-                        print("You landed on (insert property name)!")
+                    # TODO: implement the full menus here
+                    if user_choice[:5].lower() == 'house':
+                        print("this will be the buying houses menu")
+                    
+                    else:
+                        print("this will be the buying hotels menu")
+
+            
+            else:
+                stay_in_menu = False  
+                roll_again = True
+                num_doubles = 0
+                
+                # FIXME: if the player gets doubles, send them to the options menu,
+                # not back to just rolling
+                while roll_again:
+                    current_roll = roll_n_dice(2)
+                    print("player "+str(current_player+1)+" rolls a "+
+                        str(current_roll[0])+" and a "+str(current_roll[1])+".")
+                    
+                    if current_roll[0] != current_roll[1]:
+                        roll_again = False
+                    else:
+                        print("you rolled doubles! You'll get to roll again after "
+                            "this turn.")
+                        num_doubles += 1
+
+                    if num_doubles == 3:
+                        print("You rolled doubles 3 times! Go directly to jail.")
+                        # TODO: set current player position to jail
+                    
+                    else:
+                        # NOTE: Depending on where you're at in the game, if the 
+                        # player cannot pay rent, they may need to mortgage some of
+                        # their properties. Within those blocks, add some code to
+                        # implement
                         
-                        if is_owned:
-                            if current_space == space_types[0]:
-                                print("This property is owned by (insert player name)! "
-                                    "You owe them (amount) in rent.")
+                        #some temp var until implement player and board functions here
+                        pass_go = True
+                        current_player_cash = 0
+                        # temp space codes are as follows:
+                        # P = PROPERTY
+                        # R = RAILROAD
+                        # U = UTILITY
+                        # GTJ = GO TO JAIL
+                        # CC = COMMUNITY CHEST
+                        # C = CHANCE
+                        # T = TAXES
+                        # FP = FREE PARKING
+                        # JV = JUST VISTING
+                        space_types = np.array(['P', 'R', 'U', 'GTJ',
+                                                'CC', 'C', 'T', 'FP', 'JV'])
+                        current_space = 'P'
+                        is_owned = False
+
+                        if pass_go:
+                            current_player_cash += 200
+                        
+                        if current_space == space_types[0] or current_space == space_types[1] or current_space == space_types[2]:
+                            print("You landed on (insert property name)!")
                             
-                            elif current_space == space_types[1]:
-                                print("This railroad is owned by (insert player name)! "
-                                    "They have (n) railroads, so you owe them "
-                                    "(amount) in rent.")
-                            
-                            else:
-                                print("This utility is owned by (insert player name)!")
-                                # another temp variable
-                                other_player_num_util = 2
-                                amt_owed = 0
+                            if is_owned:
+                                if current_space == space_types[0]:
+                                    print("This property is owned by (insert player name)! "
+                                        "You owe them (amount) in rent.")
                                 
-                                if other_player_num_util == 1:
-                                    amt_owed = 4*sum(current_roll)
-                                    print("They one utility, so you owe them 4 ")
+                                elif current_space == space_types[1]:
+                                    print("This railroad is owned by (insert player name)! "
+                                        "They have (n) railroads, so you owe them "
+                                        "(amount) in rent.")
                                 
                                 else:
-                                    amt_owed = 10*sum*(current_roll)
-                                    print("They own both utilities, so you owe them 10 ")
-                                
-                                # TODO: use the string format operator {} for these
-                                print("times your dice roll, or "+str(amt_owed)+
-                                    " dollars.")
-                        
-                        else:
-                            #TODO: display property name, and stats to player
-                            buy_prop = get_yes_or_no("Looks like this property isn't "
-                                                    "owned. would you like to buy this "
-                                                    "property? ")
+                                    print("This utility is owned by (insert player name)!")
+                                    # another temp variable
+                                    other_player_num_util = 2
+                                    amt_owed = 0
+                                    
+                                    if other_player_num_util == 1:
+                                        amt_owed = 4*sum(current_roll)
+                                        print("They one utility, so you owe them 4 ")
+                                    
+                                    else:
+                                        amt_owed = 10*sum*(current_roll)
+                                        print("They own both utilities, so you owe them 10 ")
+                                    
+                                    # TODO: use the string format operator {} for these
+                                    print("times your dice roll, or "+str(amt_owed)+
+                                        " dollars.")
                             
-                            if buy_prop:
-                                print("You just bought (insert property name)!")
+                            else:
+                                #TODO: display property name, and stats to player
+                                buy_prop = get_yes_or_no("Looks like this property isn't "
+                                                        "owned. would you like to buy this "
+                                                        "property? ")
+                                
+                                if buy_prop:
+                                    print("You just bought (insert property name)!")
+                                else:
+                                    pass
+
+                        elif current_space == space_types[3]:
+                            print("Go to jail. Go directly to jail. Do not pass Go. Do not "
+                                "collect $200.")
+                            # TODO: set user current space to "JAIL"
+                        
+                        elif current_space == space_types[4]:
+                            print("You landed on the community chest: Take a chest card!")
+                            print("Community chest says: ")
+                            # TODO: call community chest card from gameboard.py
+                        
+                        elif current_space == space_types[5]:
+                            print("You landed on a chance space: Take a chance card!")
+                            print("Chance says: ")
+                            # TODO: call chance card from gameboard.py
+                        
+                        elif current_space == space_types[6]:
+                            tax_type = "INCOME"
+                            if tax_type == "INCOME":
+                                print("Income tax! pay $200 to the bank.")
+                            else:
+                                print("Luxury tax! pay $100 to the bank.")
+                        
+                        elif current_space == space_types[7]:
+                            print("You landed on free parking!")
+                            if use_free_parking:
+                                print("There is a total of (insert amount) collected. It's "
+                                    "all yours!")
                             else:
                                 pass
 
-                    elif current_space == space_types[3]:
-                        print("Go to jail. Go directly to jail. Do not pass Go. Do not "
-                            "collect $200.")
-                        # TODO: set user current space to "JAIL"
-                    
-                    elif current_space == space_types[4]:
-                        print("You landed on the community chest: Take a chest card!")
-                        print("Community chest says: ")
-                        # TODO: call community chest card from gameboard.py
-                    
-                    elif current_space == space_types[5]:
-                        print("You landed on a chance space: Take a chance card!")
-                        print("Chance says: ")
-                        # TODO: call chance card from gameboard.py
-                    
-                    elif current_space == space_types[6]:
-                        tax_type = "INCOME"
-                        if tax_type == "INCOME":
-                            print("Income tax! pay $200 to the bank.")
-                        else:
-                            print("Luxury tax! pay $100 to the bank.")
-                    
-                    elif current_space == space_types[7]:
-                        print("You landed on free parking!")
-                        if use_free_parking:
-                            print("There is a total of (insert amount) collected. It's "
-                                "all yours!")
-                        else:
-                            pass
+                        elif current_space == space_types[8]:
+                            print("Just visiting!")
 
-                    elif current_space == space_types[8]:
-                        print("Just visiting!")
-
-            current_player = (current_player + 1) % num_players
-            # any other kind of game stats you want to keep track of? such as:
-            # number of turns
+        current_player = (current_player + 1) % num_players
+        # any other kind of game stats you want to keep track of? such as:
+        # number of turns
